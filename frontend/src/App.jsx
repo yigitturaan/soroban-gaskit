@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import * as StellarSdk from "@stellar/stellar-sdk";
 import {
   isConnected,
@@ -39,70 +39,87 @@ function freighterSigner(networkPassphrase) {
   };
 }
 
-function truncAddr(addr) {
-  return addr ? `${addr.slice(0, 6)}...${addr.slice(-6)}` : "";
+function truncAddr(a) {
+  return a ? `${a.slice(0, 5)}...${a.slice(-5)}` : "";
 }
 
 function fmtUsdc(raw) {
   return (Number(raw) / 1e7).toFixed(2);
 }
 
-/* ────────────────────────────────────────────── */
+function ts() {
+  return new Date().toLocaleTimeString("en-GB", { hour12: false });
+}
 
 function App() {
   const [publicKey, setPublicKey] = useState(null);
   const [balance, setBalance] = useState(null);
   const [tokenOk, setTokenOk] = useState(true);
   const [recipient, setRecipient] = useState("");
-  const [status, setStatus] = useState(null);
+  const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const logRef = useRef(null);
+
+  const log = useCallback((tag, msg) => {
+    setLogs((prev) => [...prev, { ts: ts(), tag, msg }]);
+    requestAnimationFrame(() => {
+      if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
+    });
+  }, []);
 
   async function connectWallet() {
     try {
+      log("info", "Connecting to Freighter...");
       const { isConnected: connected } = await isConnected();
       if (!connected) {
-        setStatus({ type: "error", msg: "Freighter extension not detected. Please install it from freighter.app" });
+        log("err", "Freighter extension not detected.");
         return;
       }
 
       const allowed = await setAllowed();
       if (allowed.error) {
-        setStatus({ type: "error", msg: "Connection rejected by wallet." });
+        log("err", "Connection rejected by wallet.");
         return;
       }
 
       const { address, error } = await getAddress();
       if (error) {
-        setStatus({ type: "error", msg: "Could not retrieve wallet address." });
+        log("err", "Could not retrieve wallet address.");
         return;
       }
 
       setPublicKey(address);
-      setStatus({ type: "info", msg: "Checking USDC balance…" });
+      log("ok", `Wallet connected: ${truncAddr(address)}`);
+      log("info", "Querying USDC balance...");
 
       const bal = await paymaster.getTokenBalance(address);
       if (bal === null) {
         setTokenOk(false);
         setBalance(null);
-        setStatus({ type: "error", msg: "USDC trustline not found. Add one via Step 2." });
+        log("warn", "No USDC trustline found. Add one manually or via Step 2.");
       } else {
         setTokenOk(true);
         setBalance(bal);
-        setStatus({ type: "success", msg: `Wallet connected — ${fmtUsdc(bal)} USDC available` });
+        log("ok", `Balance: ${fmtUsdc(bal)} USDC`);
       }
     } catch (err) {
-      setStatus({ type: "error", msg: err.message });
+      log("err", err.message);
     }
   }
 
   async function handleSend() {
     if (!publicKey || !recipient) {
-      setStatus({ type: "error", msg: "Enter a valid recipient address." });
+      log("err", "Missing recipient address.");
       return;
     }
 
     setLoading(true);
     try {
+      const statusHandler = ({ msg }) => {
+        const tag = msg.includes("approve") ? "info" : "info";
+        log(tag, msg);
+      };
+
       const result = await paymaster.execute({
         user: publicKey,
         targetContract: paymaster.feeToken,
@@ -113,49 +130,40 @@ function App() {
           StellarSdk.nativeToScVal(SEND_AMOUNT, { type: "i128" }),
         ],
         signer: freighterSigner(NETWORK_PASSPHRASE),
-        onStatus: setStatus,
+        onStatus: statusHandler,
       });
 
-      setStatus({
-        type: "success",
-        msg: `Transaction ${result.status}! Hash: ${result.hash}`,
-      });
+      log("ok", `TX ${result.status} — hash: ${result.hash}`);
 
       const newBal = await paymaster.getTokenBalance(publicKey);
-      if (newBal !== null) setBalance(newBal);
+      if (newBal !== null) {
+        setBalance(newBal);
+        log("ok", `Updated balance: ${fmtUsdc(newBal)} USDC`);
+      }
     } catch (err) {
       const respData = err.response?.data;
-      let msg = respData?.error || err.message || "Unknown error occurred.";
+      let msg = respData?.error || err.message || "Unknown error.";
 
       if (respData?.diagnosticEvents?.length) {
         const evtSummary = respData.diagnosticEvents
           .map((e) => (typeof e === "string" ? e : JSON.stringify(e.data)))
           .join(" | ");
-        msg += ` [events: ${evtSummary}]`;
+        msg += ` [${evtSummary}]`;
       }
-
-      if (respData?.hash) {
-        msg += ` (tx: ${respData.hash})`;
-      }
+      if (respData?.hash) msg += ` (tx: ${respData.hash})`;
 
       console.error("Relay error:", respData ?? err);
-      setStatus({ type: "error", msg });
+      log("err", msg);
     } finally {
       setLoading(false);
     }
   }
 
-  function handleOnboardingAction(action) {
+  function handleOnboarding(action) {
     if (action === "usdc") {
-      setStatus({
-        type: "warning",
-        msg: "V2 Vision: Claimable Balances will auto-airdrop test USDC to new wallets. For now, use the Stellar Laboratory to send testnet USDC.",
-      });
+      log("warn", "V2: Claimable Balances will auto-distribute test USDC. Currently use Stellar Laboratory.");
     } else {
-      setStatus({
-        type: "warning",
-        msg: "V2 Vision: Trustlines will be auto-established via sponsored transactions. Currently, add the USDC trustline manually from your wallet.",
-      });
+      log("warn", "V2: Trustlines will be auto-established via sponsored transactions. Add USDC trustline from your wallet.");
     }
   }
 
@@ -164,300 +172,351 @@ function App() {
 
   return (
     <div className="app">
-      {/* ── Navbar ── */}
-      <nav className="navbar">
+      <div className="grid-bg" />
+
+      {/* ── Nav ── */}
+      <nav className="nav">
         <a href="#" className="nav-brand">
-          <span className="nav-logo">⛽</span> Soroban Gas Station
+          soroban-gas-station <span>/testnet</span>
         </a>
-        <ul className="nav-links">
-          <li><a href="#docs">How It Works</a></li>
-          <li><a href="#architecture">Architecture</a></li>
-          <li><a href="#playground">Demo</a></li>
-        </ul>
-        {publicKey ? (
-          <div className="nav-wallet-btn">
-            <span className="nav-dot" />
-            {truncAddr(publicKey)}
-          </div>
-        ) : (
-          <button className="btn btn-primary" onClick={connectWallet} style={{ padding: "0.5rem 1.25rem", fontSize: "0.85rem" }}>
-            Connect Wallet
-          </button>
-        )}
+        <div className="nav-right">
+          <a href="#how" className="nav-link hide-mobile">How it works</a>
+          <a href="#flow" className="nav-link hide-mobile">Architecture</a>
+          <a href="#demo" className="nav-link">Demo</a>
+          <a
+            href="https://github.com/yigitturaan/stellar-paymaster-v2"
+            target="_blank"
+            rel="noreferrer"
+            className="nav-link"
+          >
+            GitHub
+          </a>
+          {publicKey ? (
+            <div className="wallet-pill">
+              <span className="indicator" />
+              {truncAddr(publicKey)}
+            </div>
+          ) : (
+            <button className="btn-connect" onClick={connectWallet}>
+              Connect
+            </button>
+          )}
+        </div>
       </nav>
 
       {/* ── Hero ── */}
       <section className="hero">
-        <div className="hero-badge">
-          <span className="pulse" />
+        <div className="hero-tag">
+          <span className="dot" />
           Live on Stellar Testnet
         </div>
-        <h1>Soroban Gas Station</h1>
-        <p className="hero-subtitle">
-          Eliminating gas friction for the Stellar ecosystem.
-          Let your users pay fees in USDC — zero XLM required.
+        <h1>
+          Gasless Soroban<br />
+          <span className="accent">Infrastructure.</span>
+        </h1>
+        <p className="hero-sub">
+          An action-agnostic SDK that lets users pay transaction fees in
+          USDC instead of XLM. Integrate in three lines.
         </p>
         <div className="hero-actions">
-          <a href="#playground" className="btn btn-primary">
-            Try the Demo
+          <a href="#demo" className="btn btn-primary">
+            Open Playground
           </a>
           <a
             href="https://github.com/yigitturaan/stellar-paymaster-v2"
             target="_blank"
             rel="noreferrer"
-            className="btn btn-secondary"
+            className="btn btn-ghost"
           >
-            View on GitHub
+            View Source
           </a>
         </div>
       </section>
 
-      {/* ── Documentation ── */}
-      <section id="docs" className="section">
-        <span className="section-label">Why It Matters</span>
-        <h2 className="section-title">The Problem & Our Solution</h2>
+      <div className="divider" />
+
+      {/* ── How it Works ── */}
+      <section id="how" className="section">
+        <div className="section-tag">How it works</div>
+        <h2 className="section-title">The problem with Soroban gas</h2>
         <p className="section-desc">
-          Every Soroban transaction requires XLM for gas — a huge barrier for new
-          users who only hold stablecoins. We built an SDK that removes this
-          friction entirely.
+          Every Soroban transaction requires XLM. Users holding only stablecoins
+          face a multi-step onboarding wall that kills conversion.
         </p>
-        <div className="docs-grid">
-          <div className="glass-card">
-            <div className="card-icon">🚧</div>
-            <h3>The Problem</h3>
+
+        <div className="bento-grid">
+          <div className="bento-cell">
+            <div className="bento-label">Problem</div>
+            <h3>XLM acquisition barrier</h3>
             <p>
-              Users must acquire XLM before they can do <em>anything</em> on
-              Stellar. This creates a <span className="card-highlight">multi-step
-              onboarding wall</span> that kills conversion for consumer dApps,
-              wallets, and payment flows.
+              Before doing anything on Stellar, users need to acquire XLM from
+              an exchange, fund their wallet, and manage a second token they
+              don&apos;t want — just to pay gas.
             </p>
           </div>
-          <div className="glass-card">
-            <div className="card-icon">⚡</div>
-            <h3>Our Solution</h3>
+          <div className="bento-cell">
+            <div className="bento-label">Solution</div>
+            <h3>Token-denominated fees</h3>
             <p>
-              An <span className="card-highlight-green">action-agnostic Paymaster
-              SDK</span> that wraps any Soroban contract call. A relayer bot pays
-              the XLM fee and atomically collects a small token fee (e.g. 0.5 USDC)
-              from the user — all in a single transaction.
+              Wrap any contract call with our Paymaster. A relayer bot covers the
+              XLM fee and atomically collects a small token payment from the user.
+              One transaction, zero XLM.
+            </p>
+          </div>
+          <div className="bento-cell">
+            <div className="bento-label">Integration</div>
+            <h3>Three lines of code</h3>
+            <p>
+              Import the SDK, pass your contract call parameters,
+              and <code style={{ color: "var(--accent)" }}>paymaster.execute()</code> handles
+              simulation, signing, and relay.
+            </p>
+          </div>
+          <div className="bento-cell">
+            <div className="bento-label">Scope</div>
+            <h3>Action-agnostic</h3>
+            <p>
+              Not limited to transfers. Any Soroban contract invocation — swaps,
+              mints, governance votes, game actions — can be made gasless through
+              the same SDK.
             </p>
           </div>
         </div>
-      </section>
 
-      {/* ── Features ── */}
-      <section className="section">
-        <span className="section-label">SDK Capabilities</span>
-        <h2 className="section-title">Built for Developers</h2>
-        <div className="features-grid">
-          <div className="glass-card feature-card">
-            <div className="card-icon">🔌</div>
-            <h3>Action-Agnostic</h3>
-            <p>Works with any Soroban contract — transfers, swaps, NFT mints, governance votes.</p>
-          </div>
-          <div className="glass-card feature-card">
-            <div className="card-icon">🛡️</div>
-            <h3>Atomic Execution</h3>
-            <p>Fee payment and the user action happen in a single transaction. No partial failures.</p>
-          </div>
-          <div className="glass-card feature-card">
-            <div className="card-icon">🧩</div>
-            <h3>3-Line Integration</h3>
-            <p>Import the SDK, configure once, call <code>paymaster.execute()</code>. That&apos;s it.</p>
-          </div>
-        </div>
-
-        <div className="code-block">
-          <pre>{`<span class="cmt">// Gasless USDC transfer in 3 lines</span>
-<span class="kw">const</span> paymaster = <span class="kw">new</span> <span class="fn">SorobanPaymaster</span>({ ...config });
-
-<span class="kw">await</span> paymaster.<span class="fn">execute</span>({
-  user:           publicKey,
-  targetContract: <span class="str">"CUSDC..."</span>,
-  functionName:   <span class="str">"transfer"</span>,
-  args:           [from, to, amount],
-  signer:         myWalletSigner,
-});`}
-          </pre>
-        </div>
-      </section>
-
-      {/* ── Architecture ── */}
-      <section id="architecture" className="section arch-section">
-        <span className="section-label">System Design</span>
-        <h2 className="section-title">Architecture</h2>
-        <p className="section-desc" style={{ margin: "0 auto" }}>
-          Four components working together to deliver a seamless gasless experience.
-        </p>
-        <div className="arch-flow">
-          <div className="arch-node">
-            <span className="arch-node-icon">🌐</span>
-            <span className="arch-node-label">Your DApp</span>
-            <span className="arch-node-sub">React / Any</span>
-          </div>
-          <div className="arch-arrow">
-            <span>SDK call</span>
-            <div className="arch-arrow-line" />
-          </div>
-          <div className="arch-node">
-            <span className="arch-node-icon">📦</span>
-            <span className="arch-node-label">Paymaster SDK</span>
-            <span className="arch-node-sub">SorobanPaymaster.js</span>
-          </div>
-          <div className="arch-arrow">
-            <span>XDR relay</span>
-            <div className="arch-arrow-line" />
-          </div>
-          <div className="arch-node">
-            <span className="arch-node-icon">🤖</span>
-            <span className="arch-node-label">Relayer Bot</span>
-            <span className="arch-node-sub">Render (Live)</span>
-          </div>
-          <div className="arch-arrow">
-            <span>Submit TX</span>
-            <div className="arch-arrow-line" />
-          </div>
-          <div className="arch-node">
-            <span className="arch-node-icon">🔗</span>
-            <span className="arch-node-label">Soroban RPC</span>
-            <span className="arch-node-sub">Stellar Testnet</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Interactive Playground ── */}
-      <section id="playground" className="section playground-section">
-        <span className="section-label">Interactive Demo</span>
-        <h2 className="section-title">Try It Yourself</h2>
-        <p className="section-desc">
-          Connect your Freighter wallet and send a gasless USDC transfer on
-          Stellar Testnet — no XLM needed.
-        </p>
-
-        <div className="playground-layout">
-          {/* Step 1 */}
-          <div className={`step-card ${publicKey ? "completed" : "active"}`}>
-            <div className="step-header">
-              <span className={`step-number ${publicKey ? "done" : "pending"}`}>
-                {publicKey ? "✓" : "1"}
-              </span>
-              <span className="step-title">Connect Wallet</span>
+        {/* SDK sample */}
+        <div className="terminal">
+          <div className="terminal-bar">
+            <div className="terminal-dots">
+              <span /><span /><span />
             </div>
-            <p className="step-desc">
-              Link your Freighter wallet to interact with Stellar Testnet.
-            </p>
-            {publicKey ? (
-              <div className="wallet-info">
-                <span className="dot" />
-                <span className="address">{truncAddr(publicKey)}</span>
-                {balance !== null && (
-                  <span className="balance">{fmtUsdc(balance)} USDC</span>
+            <span className="terminal-title">SorobanPaymaster.js — usage</span>
+          </div>
+          <div className="terminal-body">
+            <div className="ln"><span className="ln-num">1</span><span className="ln-content"><span className="t-kw">const</span> paymaster = <span className="t-kw">new</span> <span className="t-fn">SorobanPaymaster</span>{"({"} ...config {"});"}</span></div>
+            <div className="ln"><span className="ln-num">2</span><span className="ln-content" /></div>
+            <div className="ln"><span className="ln-num">3</span><span className="ln-content"><span className="t-kw">await</span> paymaster.<span className="t-fn">execute</span>{"({"}</span></div>
+            <div className="ln"><span className="ln-num">4</span><span className="ln-content">{"  "}user:           publicKey,</span></div>
+            <div className="ln"><span className="ln-num">5</span><span className="ln-content">{"  "}targetContract: <span className="t-str">&quot;CUSDC...&quot;</span>,</span></div>
+            <div className="ln"><span className="ln-num">6</span><span className="ln-content">{"  "}functionName:   <span className="t-str">&quot;transfer&quot;</span>,</span></div>
+            <div className="ln"><span className="ln-num">7</span><span className="ln-content">{"  "}args:           [from, to, amount],</span></div>
+            <div className="ln"><span className="ln-num">8</span><span className="ln-content">{"  "}signer:         walletSigner,</span></div>
+            <div className="ln"><span className="ln-num">9</span><span className="ln-content">{"});"}</span></div>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" />
+
+      {/* ── Architecture Flow ── */}
+      <section id="flow" className="section flow-section">
+        <div className="section-tag">Architecture</div>
+        <h2 className="section-title">Transaction lifecycle</h2>
+        <p className="section-desc" style={{ margin: "0 auto" }}>
+          Four stages from user intent to on-chain finality.
+        </p>
+
+        <div className="flow-track">
+          <div className="flow-node">
+            <span className="flow-node-num">01</span>
+            <span className="flow-node-label">DApp</span>
+            <span className="flow-node-detail">SDK call</span>
+          </div>
+          <div className="flow-sep" />
+          <div className="flow-node">
+            <span className="flow-node-num">02</span>
+            <span className="flow-node-label">Paymaster SDK</span>
+            <span className="flow-node-detail">Simulate + sign auth</span>
+          </div>
+          <div className="flow-sep" />
+          <div className="flow-node">
+            <span className="flow-node-num">03</span>
+            <span className="flow-node-label">Relayer Bot</span>
+            <span className="flow-node-detail">Sign XDR + submit</span>
+          </div>
+          <div className="flow-sep" />
+          <div className="flow-node">
+            <span className="flow-node-num">04</span>
+            <span className="flow-node-label">Soroban RPC</span>
+            <span className="flow-node-detail">On-chain finality</span>
+          </div>
+        </div>
+
+        {/* Key metrics */}
+        <div className="bento-grid bento-grid-3" style={{ marginTop: 16 }}>
+          <div className="bento-cell" style={{ textAlign: "center" }}>
+            <div className="cell-value">0</div>
+            <div className="cell-unit">XLM required from user</div>
+          </div>
+          <div className="bento-cell" style={{ textAlign: "center" }}>
+            <div className="cell-value">0.5</div>
+            <div className="cell-unit">USDC fee per transaction</div>
+          </div>
+          <div className="bento-cell" style={{ textAlign: "center" }}>
+            <div className="cell-value">1</div>
+            <div className="cell-unit">Atomic transaction</div>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" />
+
+      {/* ── Playground ── */}
+      <section id="demo" className="section playground">
+        <div className="section-tag">Playground</div>
+        <h2 className="section-title">Control Panel</h2>
+        <p className="section-desc">
+          Execute a gasless USDC transfer on Stellar Testnet.
+        </p>
+
+        <div className="panel-grid">
+          {/* Left: Steps */}
+          <div className="panel-left">
+            <div className="panel-label">Transaction Pipeline</div>
+
+            {/* Step 1 */}
+            <div className="step-item">
+              <div className={`step-indicator ${publicKey ? "done" : "active"}`}>
+                {publicKey ? "\u2713" : "1"}
+              </div>
+              <div className="step-content">
+                <div className="step-name">Connect Wallet</div>
+                <div className="step-detail">
+                  Authenticate via Freighter extension.
+                </div>
+                {publicKey ? (
+                  <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", marginTop: 8 }}>
+                    <span className="connected-badge">
+                      <span className="c-dot" />
+                      {truncAddr(publicKey)}
+                    </span>
+                    {balance !== null && (
+                      <span className="balance-tag">{fmtUsdc(balance)} USDC</span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="step-actions">
+                    <button className="btn btn-primary btn-sm" onClick={connectWallet}>
+                      Connect
+                    </button>
+                  </div>
                 )}
               </div>
-            ) : (
-              <div className="step-actions">
-                <button className="btn btn-primary btn-full" onClick={connectWallet}>
-                  Connect Freighter
-                </button>
+            </div>
+
+            {/* Step 2 */}
+            <div className="step-item">
+              <div className={`step-indicator ${publicKey && tokenOk ? "done" : publicKey ? "active" : ""}`}>
+                {publicKey && tokenOk ? "\u2713" : "2"}
               </div>
-            )}
+              <div className="step-content">
+                <div className="step-name">Onboarding</div>
+                <div className="step-detail">
+                  USDC trustline &amp; test tokens.
+                </div>
+                <div className="step-actions">
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => handleOnboarding("usdc")}
+                    disabled={!publicKey}
+                  >
+                    Request USDC
+                  </button>
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => handleOnboarding("trustline")}
+                    disabled={!publicKey}
+                  >
+                    Add Trustline
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="step-item">
+              <div className={`step-indicator ${publicKey && tokenOk ? "active" : ""}`}>
+                3
+              </div>
+              <div className="step-content">
+                <div className="step-name">Execute Transfer</div>
+                <div className="step-detail">
+                  Send 10 USDC. Fee: 0.5 USDC. XLM cost: 0.
+                </div>
+                <div className="form-group">
+                  <label className="form-label" htmlFor="recipient">
+                    Recipient
+                  </label>
+                  <input
+                    id="recipient"
+                    className="form-input"
+                    type="text"
+                    placeholder="G..."
+                    value={recipient}
+                    onChange={(e) => setRecipient(e.target.value)}
+                    disabled={loading || !publicKey || !tokenOk}
+                  />
+                </div>
+                <div className="step-actions" style={{ marginTop: 12 }}>
+                  <button
+                    className="btn btn-primary btn-sm btn-full"
+                    onClick={handleSend}
+                    disabled={loading || !recipient || needsMore || !publicKey || !tokenOk}
+                  >
+                    {loading
+                      ? "Processing..."
+                      : needsMore
+                        ? "Insufficient balance"
+                        : "Send 10 USDC (Gasless)"}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Step 2 */}
-          <div className={`step-card ${publicKey && !tokenOk ? "active" : ""}`}>
-            <div className="step-header">
-              <span className={`step-number ${publicKey ? (tokenOk ? "done" : "pending") : "pending"}`}>
-                {publicKey && tokenOk ? "✓" : "2"}
-              </span>
-              <span className="step-title">Onboarding</span>
-            </div>
-            <p className="step-desc">
-              Ensure your wallet has a USDC trustline and test tokens. In V2,
-              this will be fully automated via Claimable Balances.
-            </p>
-            <div className="step-actions">
-              <button
-                className="btn btn-outline"
-                onClick={() => handleOnboardingAction("usdc")}
-                disabled={!publicKey}
-              >
-                Request Test USDC
-              </button>
-              <button
-                className="btn btn-outline"
-                onClick={() => handleOnboardingAction("trustline")}
-                disabled={!publicKey}
-              >
-                Add Trustline
-              </button>
-            </div>
-          </div>
-
-          {/* Step 3 */}
-          <div className={`step-card ${publicKey && tokenOk ? "active" : ""}`}>
-            <div className="step-header">
-              <span className="step-number pending">3</span>
-              <span className="step-title">Execute Gasless Transfer</span>
-            </div>
-            <p className="step-desc">
-              Send 10 USDC to any Stellar address. The 0.5 USDC fee is deducted
-              automatically — you pay zero XLM.
-            </p>
-            <div className="transfer-form">
-              <div className="input-group">
-                <label htmlFor="recipient">Recipient Address</label>
-                <input
-                  id="recipient"
-                  type="text"
-                  placeholder="G..."
-                  value={recipient}
-                  onChange={(e) => setRecipient(e.target.value)}
-                  disabled={loading || !publicKey || !tokenOk}
-                />
-              </div>
-              <button
-                className="btn btn-emerald btn-full"
-                onClick={handleSend}
-                disabled={loading || !recipient || needsMore || !publicKey || !tokenOk}
-              >
-                {loading
-                  ? "Processing…"
-                  : needsMore
-                    ? "Insufficient USDC Balance"
-                    : "Send 10 USDC (Gasless) ⚡"}
-              </button>
+          {/* Right: Log output */}
+          <div className="panel-right">
+            <div className="panel-label">Output</div>
+            <div className="log-output" ref={logRef}>
+              {logs.length === 0 ? (
+                <span className="log-empty">
+                  Waiting for input<span className="log-cursor" />
+                </span>
+              ) : (
+                logs.map((l, i) => (
+                  <div className="log-line" key={i}>
+                    <span className="log-ts">{l.ts}</span>
+                    <span className={`log-tag ${l.tag}`}>
+                      [{l.tag.toUpperCase()}]
+                    </span>
+                    <span className="log-msg">{l.msg}</span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
-
-        {/* Status */}
-        {status && (
-          <div className={`status-toast status-${status.type}`}>
-            {status.msg}
-          </div>
-        )}
       </section>
 
       {/* ── Footer ── */}
-      <footer className="site-footer">
-        <div className="footer-brand">⛽ Soroban Gas Station</div>
-        <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>
-          Action-Agnostic Gasless SDK for Stellar / Soroban
-        </p>
-        <div className="footer-links">
-          <a href="https://github.com/yigitturaan/stellar-paymaster-v2" target="_blank" rel="noreferrer">
+      <footer className="footer">
+        <div className="footer-left">
+          soroban-gas-station — ODTU Blockchain Hackathon
+        </div>
+        <div className="footer-right">
+          <a
+            href="https://github.com/yigitturaan/stellar-paymaster-v2"
+            target="_blank"
+            rel="noreferrer"
+          >
             GitHub
           </a>
           <a href="https://stellar.org" target="_blank" rel="noreferrer">
             Stellar
           </a>
           <a href="https://soroban.stellar.org" target="_blank" rel="noreferrer">
-            Soroban Docs
+            Docs
           </a>
         </div>
-        <p className="footer-copy">
-          Built for the ODTU Blockchain Hackathon &middot; Powered by Soroban &amp; Stellar Testnet
-        </p>
       </footer>
     </div>
   );

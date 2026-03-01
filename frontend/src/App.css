@@ -259,6 +259,125 @@
   line-height: 1.65;
 }
 
+/* ── Problem / Solution Cards ── */
+.ps-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-top: 32px;
+}
+
+.ps-card {
+  background: var(--bg-card);
+  padding: 32px;
+  border-top: 2px solid transparent;
+  transition: background 0.2s;
+}
+
+.ps-card:hover {
+  background: var(--bg-elevated);
+}
+
+.ps-problem {
+  border-top-color: var(--red);
+}
+
+.ps-solution {
+  border-top-color: var(--green);
+}
+
+.ps-badge {
+  display: inline-flex;
+  height: 24px;
+  padding: 0 10px;
+  align-items: center;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.ps-badge-red {
+  background: var(--red-muted);
+  color: var(--red);
+}
+
+.ps-badge-green {
+  background: var(--green-muted);
+  color: var(--green);
+}
+
+.ps-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-0);
+  margin-bottom: 14px;
+  line-height: 1.35;
+}
+
+.ps-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ps-list li {
+  font-size: 0.85rem;
+  color: var(--text-1);
+  line-height: 1.5;
+  padding-left: 18px;
+  position: relative;
+}
+
+.ps-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border-hover);
+}
+
+.ps-problem .ps-list li::before {
+  background: var(--red);
+  opacity: 0.5;
+}
+
+.ps-solution .ps-list li::before {
+  background: var(--green);
+  opacity: 0.5;
+}
+
+.ps-impact {
+  font-size: 0.82rem;
+  color: var(--text-2);
+  line-height: 1.55;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.ps-impact strong {
+  color: var(--text-0);
+}
+
+@media (max-width: 768px) {
+  .ps-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── Bento Grid (Features) ── */
 .bento-grid {
   display: grid;

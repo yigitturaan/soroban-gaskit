@@ -378,7 +378,8 @@ function App() {
           soroban-gas-station <span>/testnet</span>
         </a>
         <div className="nav-right">
-          <a href="#how" className="nav-link hide-mobile">How it works</a>
+          <a href="#why" className="nav-link hide-mobile">Why</a>
+          <a href="#how" className="nav-link hide-mobile">How</a>
           <a href="#flow" className="nav-link hide-mobile">Architecture</a>
           <a href="#demo" className="nav-link">Demo</a>
           <a
@@ -428,6 +429,42 @@ function App() {
           >
             View Source
           </a>
+        </div>
+      </section>
+
+      <div className="divider" />
+
+      {/* ── Problem / Solution ── */}
+      <section id="why" className="section">
+        <div className="section-tag">Why it matters</div>
+        <h2 className="section-title">The gas barrier is real</h2>
+
+        <div className="ps-grid">
+          <div className="ps-card ps-problem">
+            <div className="ps-badge ps-badge-red">Problem</div>
+            <h3>Users need XLM before they can do anything</h3>
+            <ul className="ps-list">
+              <li>Must buy XLM from an exchange first</li>
+              <li>Fund a Stellar wallet with a second token</li>
+              <li>Manage gas they don&apos;t understand or want</li>
+            </ul>
+            <p className="ps-impact">
+              Result: <strong>massive drop-off</strong> at onboarding for every consumer dApp, wallet, and payment flow on Stellar.
+            </p>
+          </div>
+
+          <div className="ps-card ps-solution">
+            <div className="ps-badge ps-badge-green">Solution</div>
+            <h3>One SDK. Zero XLM. Any contract.</h3>
+            <ul className="ps-list">
+              <li>Users pay a micro-fee in USDC (0.005 USDC)</li>
+              <li>Relayer bot covers all XLM network costs</li>
+              <li>Works with <em>any</em> Soroban contract call</li>
+            </ul>
+            <p className="ps-impact">
+              Result: <strong>Web2-grade UX</strong> — users interact with dApps using only the assets they already hold.
+            </p>
+          </div>
         </div>
       </section>
 

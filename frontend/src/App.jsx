@@ -16,7 +16,7 @@ const paymaster = new SorobanPaymaster({
   networkPassphrase: NETWORK_PASSPHRASE,
   contractId: "CAPDJ4F747URENH5FLAKHXH377JOENTSRCY4NQBJQZZIEJEBGUZG5NCY",
   feeToken: "CA63EPM4EEXUVUANF6FQUJEJ37RWRYIXCARWFXYUMPP7RLZWFNLTVNR4",
-  relayerUrl: "http://localhost:3001/relay",
+  relayerUrl: "https://stellar-gas-station-api.onrender.com/relay",
   relayerPublicKey: "GCF57AY6GBLPG6VK3LU27A4E5CSJRYSNSBA5XB2V6MKPUVF7PSHTT5KW",
   feeAmount: 5_000_000n,
 });

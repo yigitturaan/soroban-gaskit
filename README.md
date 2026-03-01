@@ -109,7 +109,7 @@ soroban-gaskit/
 
 | Resource | URL |
 |----------|-----|
-| Demo (Frontend) | *Deployed via Vercel — see repo settings* |
+| Demo (Frontend) | [soroban-gaskit.vercel.app](https://soroban-gaskit.vercel.app) |
 | Relay API | `https://stellar-gas-station-api.onrender.com/relay` |
 | GitHub | [github.com/yigitturaan/stellar-paymaster-v2](https://github.com/yigitturaan/stellar-paymaster-v2) |
 

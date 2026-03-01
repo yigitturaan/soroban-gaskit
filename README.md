@@ -111,7 +111,7 @@ soroban-gaskit/
 |----------|-----|
 | Demo (Frontend) | [soroban-gaskit.vercel.app](https://soroban-gaskit.vercel.app) |
 | Relay API | `https://stellar-gas-station-api.onrender.com/relay` |
-| GitHub | [github.com/yigitturaan/stellar-paymaster-v2](https://github.com/yigitturaan/soroban-gaskit) |
+| GitHub | [github.com/yigitturaan/soroban-gaskit](https://github.com/yigitturaan/soroban-gaskit) |
 
 ---
 

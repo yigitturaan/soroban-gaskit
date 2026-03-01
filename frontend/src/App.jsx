@@ -90,6 +90,17 @@ function IconZap() {
   );
 }
 
+function IconPlug() {
+  return (
+    <svg viewBox="0 0 24 24">
+      <path d="M12 22v-5" />
+      <path d="M9 8V2" />
+      <path d="M15 8V2" />
+      <path d="M18 8v4a6 6 0 0 1-12 0V8z" />
+    </svg>
+  );
+}
+
 function IconUser() {
   return (
     <svg viewBox="0 0 24 24" stroke="var(--text-1)" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -509,6 +520,16 @@ function App() {
             <div className="bento-tags">
               <span className="tag">NPM</span>
               <span className="tag tag-accent">API</span>
+            </div>
+          </div>
+          <div className="bento-cell bento-wide">
+            <div className="bento-icon"><IconPlug /></div>
+            <h3>Zero-Config Integration</h3>
+            <p>No API keys, no backend proxies, no CORS issues. A lightweight client-side module — just drop it into your project.</p>
+            <div className="bento-tags">
+              <span className="tag tag-accent">CLIENT-SIDE</span>
+              <span className="tag">NO BACKEND</span>
+              <span className="tag">ZERO-CONFIG</span>
             </div>
           </div>
         </div>

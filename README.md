@@ -17,6 +17,7 @@ Every Soroban transaction requires XLM for gas. Users who hold stablecoins face 
 1. Acquire XLM from an exchange.
 2. Fund their Stellar wallet.
 3. Manage a second token they don't need — just to pay fees.
+4. Heavy infrastructure: existing paymaster solutions require developers to manage complex relayer backends, API keys, and CORS configurations.
 
 This kills conversion for consumer dApps, wallets, and payment flows.
 
@@ -27,6 +28,7 @@ This kills conversion for consumer dApps, wallets, and payment flows.
 - **Any contract call** — transfers, swaps, mints, governance votes.
 - **Atomic execution** — fee payment and the user action never partially fail.
 - **Zero trust required** — the on-chain contract enforces the fee transfer before forwarding the call.
+- **Client-side simplicity** — no API keys or backend proxies required. A truly lightweight, zero-configuration module built for frontend developers.
 
 ---
 

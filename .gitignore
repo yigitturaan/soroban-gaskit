@@ -1,0 +1,23 @@
+# Dependencies
+node_modules
+
+# Build / runtime
+dist
+target
+.soroban
+.stellar
+*.local
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Local skill (embedded repo)
+stellar-dev-skill
+
+# Logs & OS
+*.log
+.DS_Store
+.idea
+.vscode

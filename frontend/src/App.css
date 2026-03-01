@@ -1,0 +1,175 @@
+/* ── Layout ── */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 1.5rem 2rem;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #7b61ff, #00c2ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  color: #888;
+  font-size: 0.9rem;
+  margin-top: 0.4rem;
+}
+
+main {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+footer {
+  margin-top: auto;
+  padding-top: 3rem;
+  color: #555;
+  font-size: 0.75rem;
+}
+
+/* ── Cards ── */
+.card {
+  background: #1a1a2e;
+  border: 1px solid #2a2a40;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.wallet-card {
+  display: flex;
+  justify-content: center;
+}
+
+.connected {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.address {
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 0.95rem;
+  color: #c4c4d4;
+}
+
+.balance {
+  margin-left: auto;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #7b61ff;
+}
+
+/* ── Form ── */
+.send-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.send-card label {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.send-card input {
+  background: #12121f;
+  border: 1px solid #2a2a40;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: #e0e0ee;
+  font-size: 0.95rem;
+  font-family: "SF Mono", "Fira Code", monospace;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.send-card input:focus {
+  border-color: #7b61ff;
+}
+
+.send-card input::placeholder {
+  color: #444;
+}
+
+/* ── Buttons ── */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #7b61ff, #5b3fe4);
+  color: #fff;
+}
+
+.btn-accent {
+  background: linear-gradient(135deg, #00c2ff, #0090d9);
+  color: #fff;
+  width: 100%;
+}
+
+/* ── Status ── */
+.status {
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+.status-info {
+  background: #1a1a2e;
+  border: 1px solid #334;
+  color: #a0a0c0;
+}
+
+.status-success {
+  background: #0a2a1a;
+  border: 1px solid #22c55e44;
+  color: #4ade80;
+}
+
+.status-error {
+  background: #2a0a0a;
+  border: 1px solid #ef444444;
+  color: #f87171;
+}

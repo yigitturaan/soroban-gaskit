@@ -383,7 +383,7 @@ function App() {
           <a href="#flow" className="nav-link hide-mobile">Architecture</a>
           <a href="#demo" className="nav-link">Demo</a>
           <a
-            href="https://github.com/yigitturaan/stellar-paymaster-v2"
+            href="https://github.com/yigitturaan/soroban-gaskit"
             target="_blank"
             rel="noreferrer"
             className="nav-link"
@@ -422,7 +422,7 @@ function App() {
             Open Playground
           </a>
           <a
-            href="https://github.com/yigitturaan/stellar-paymaster-v2"
+            href="https://github.com/yigitturaan/soroban-gaskit"
             target="_blank"
             rel="noreferrer"
             className="btn btn-ghost"
@@ -674,7 +674,7 @@ function App() {
         </div>
         <div className="footer-right">
           <a
-            href="https://github.com/yigitturaan/stellar-paymaster-v2"
+            href="https://github.com/yigitturaan/soroban-gaskit"
             target="_blank"
             rel="noreferrer"
           >

@@ -5,7 +5,7 @@
 
 [![Stellar](https://img.shields.io/badge/Stellar-Soroban-blue?logo=stellar)](https://soroban.stellar.org)
 [![Network](https://img.shields.io/badge/Network-Testnet-green)](https://soroban-testnet.stellar.org)
-[![Hackathon](https://img.shields.io/badge/ODTU-Blockchain%20Hackathon-purple)](https://github.com/yigitturaan/stellar-paymaster-v2)
+[![Hackathon](https://img.shields.io/badge/ODTU-Blockchain%20Hackathon-purple)](https://github.com/yigitturaan/soroban-gaskit)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ---
@@ -111,7 +111,7 @@ soroban-gaskit/
 |----------|-----|
 | Demo (Frontend) | [soroban-gaskit.vercel.app](https://soroban-gaskit.vercel.app) |
 | Relay API | `https://stellar-gas-station-api.onrender.com/relay` |
-| GitHub | [github.com/yigitturaan/stellar-paymaster-v2](https://github.com/yigitturaan/stellar-paymaster-v2) |
+| GitHub | [github.com/yigitturaan/stellar-paymaster-v2](https://github.com/yigitturaan/soroban-gaskit) |
 
 ---
 

@@ -178,8 +178,8 @@ function ArchDiagram() {
               strokeDasharray="4 4"
             />
             <polygon
+              className="arch-arrowhead"
               points={`${c.x2 - 6},${c.cy - 4} ${c.x2},${c.cy} ${c.x2 - 6},${c.cy + 4}`}
-              fill="var(--border-hover)"
             />
           </g>
         ))}

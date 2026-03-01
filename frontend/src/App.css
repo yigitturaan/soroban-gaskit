@@ -548,11 +548,21 @@
   margin: 0 auto;
 }
 
-/* Connector lines */
+/* Connector lines — subtle left-to-right flow animation */
 .arch-connector {
-  stroke: var(--border);
-  stroke-width: 1;
+  stroke: var(--accent);
+  stroke-width: 2;
   fill: none;
+  stroke-dasharray: 8 10;
+  animation: archFlow 2s linear infinite;
+}
+
+@keyframes archFlow {
+  to { stroke-dashoffset: -18; }
+}
+
+.arch-arrowhead {
+  fill: var(--accent);
 }
 
 /* Node cards inside SVG (foreignObject) */

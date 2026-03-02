@@ -672,7 +672,7 @@ await gaskit.execute({
             </div>
             {lastTxHash && (
               <div className="receipt-card">
-                <div className="receipt-header">Transaction Successful 🎉</div>
+                <div className="receipt-header">Transaction Successful</div>
                 <div className="receipt-row">
                   <span className="receipt-label">Network Gas</span>
                   <span className="receipt-value">0 XLM</span>

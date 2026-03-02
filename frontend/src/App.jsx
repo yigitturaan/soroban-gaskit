@@ -671,14 +671,30 @@ await gaskit.execute({
               )}
             </div>
             {lastTxHash && (
-              <a
-                href={`https://stellar.expert/explorer/testnet/tx/${lastTxHash}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="explorer-link"
-              >
-                View on Stellar Expert ↗
-              </a>
+              <div className="receipt-card">
+                <div className="receipt-header">Transaction Successful 🎉</div>
+                <div className="receipt-row">
+                  <span className="receipt-label">Network Gas</span>
+                  <span className="receipt-value">0 XLM</span>
+                  <span className="receipt-pill">Sponsored by Relayer</span>
+                </div>
+                <div className="receipt-row">
+                  <span className="receipt-label">Paid</span>
+                  <span className="receipt-value">0.005 USDC</span>
+                </div>
+                <div className="receipt-row">
+                  <span className="receipt-label">Action</span>
+                  <span className="receipt-value">Contract Executed</span>
+                </div>
+                <a
+                  href={`https://stellar.expert/explorer/testnet/tx/${lastTxHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="receipt-explorer-btn"
+                >
+                  View on Stellar Expert ↗
+                </a>
+              </div>
             )}
           </div>
         </div>

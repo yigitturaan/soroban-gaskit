@@ -892,25 +892,74 @@
   overflow-y: auto;
 }
 
-.explorer-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 12px;
-  padding: 10px 16px;
+/* Smart Gasless Receipt */
+.receipt-card {
+  margin-top: 16px;
+  padding: 20px;
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: rgba(9, 9, 11, 0.6);
-  color: var(--accent);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.receipt-header {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-0);
+  margin-bottom: 4px;
+}
+
+.receipt-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.receipt-label {
+  font-size: 0.8rem;
+  color: var(--text-2);
+  min-width: 90px;
+}
+
+.receipt-value {
   font-size: 0.85rem;
   font-weight: 500;
+  color: var(--text-0);
+  font-family: var(--font-mono);
+}
+
+.receipt-pill {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: var(--green-muted);
+  color: var(--green);
+}
+
+.receipt-explorer-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent-muted);
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 600;
   text-decoration: none;
   transition: border-color 0.15s, background 0.15s;
 }
 
-.explorer-link:hover {
-  border-color: var(--accent);
-  background: var(--accent-muted);
+.receipt-explorer-btn:hover {
+  background: rgba(99, 102, 241, 0.2);
 }
 
 .log-line {

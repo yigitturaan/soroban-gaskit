@@ -237,6 +237,21 @@
   line-height: 1.65;
 }
 
+.showcase-desc {
+  color: var(--text-2);
+  font-size: 0.88rem;
+  max-width: 640px;
+}
+
+.showcase-desc code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+}
+
 /* ── Problem / Solution Cards ── */
 .ps-grid {
   display: grid;

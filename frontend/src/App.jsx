@@ -569,6 +569,10 @@ await gaskit.execute({
           A live demonstration of the <code>soroban-gaskit</code> SDK. Watch how just <strong>3 lines of code</strong> can wrap any standard contract call into a completely gasless experience.
         </p>
 
+        <div className="testing-disclaimer">
+          ⚠️ <strong>Live Testing Note:</strong> To execute a transaction in this demo, your Freighter wallet must hold our specific Testnet USDC and have an active trustline established. If you don&apos;t have these prerequisites configured, the on-chain simulation will revert. Please refer to our <strong>Demo Video</strong> for a complete, end-to-end walkthrough of the architecture.
+        </div>
+
         <div className="panel-grid">
           {/* Left: Steps */}
           <div className="panel-left">

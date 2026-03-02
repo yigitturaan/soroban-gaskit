@@ -256,6 +256,21 @@
   color: var(--text-0);
 }
 
+.testing-disclaimer {
+  margin-top: 16px;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(251, 191, 36, 0.06);
+  color: var(--text-2);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.testing-disclaimer strong {
+  color: var(--text-1);
+}
+
 /* ── Problem / Solution Cards ── */
 .ps-grid {
   display: grid;

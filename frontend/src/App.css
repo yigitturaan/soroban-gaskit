@@ -470,6 +470,32 @@
   background: var(--bg-card);
 }
 
+.code-block-wrap {
+  position: relative;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 50px;
+  right: 12px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(9, 9, 11, 0.85);
+  color: var(--text-1);
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.copy-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--text-0);
+  background: var(--bg-elevated);
+}
+
 .terminal-bar {
   display: flex;
   align-items: center;
@@ -864,6 +890,27 @@
   font-size: 0.78rem;
   line-height: 1.8;
   overflow-y: auto;
+}
+
+.explorer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(9, 9, 11, 0.6);
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.explorer-link:hover {
+  border-color: var(--accent);
+  background: var(--accent-muted);
 }
 
 .log-line {

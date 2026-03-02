@@ -235,7 +235,16 @@ function App() {
   const [recipient, setRecipient] = useState("");
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
+  const [lastTxHash, setLastTxHash] = useState(null);
   const logRef = useRef(null);
+
+  const CODE_SNIPPET = `const gaskit = new SorobanGasKit({ ...config });
+
+await gaskit.execute({
+  user, targetContract, functionName,
+  args, signer
+}); // that's it — zero XLM needed`;
 
   const log = useCallback((tag, msg) => {
     setLogs((prev) => [...prev, { ts: ts(), tag, msg }]);
@@ -311,6 +320,7 @@ function App() {
       });
 
       log("ok", `TX ${result.status} — hash: ${result.hash}`);
+      setLastTxHash(result.hash);
 
       const newBal = await paymaster.getTokenBalance(publicKey);
       if (newBal !== null) {
@@ -490,20 +500,35 @@ function App() {
           </div>
         </div>
 
-        <div className="terminal">
+        <div className="terminal code-block-wrap">
           <div className="terminal-bar">
             <div className="terminal-dots">
               <span /><span /><span />
             </div>
             <span className="terminal-title">usage.js</span>
           </div>
+          <button
+            type="button"
+            className="copy-btn"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(CODE_SNIPPET);
+                setIsCopied(true);
+                setTimeout(() => setIsCopied(false), 2000);
+              } catch (e) {
+                console.error("Copy failed:", e);
+              }
+            }}
+          >
+            {isCopied ? "Copied! ✓" : "Copy"}
+          </button>
           <div className="terminal-body">
             <div className="ln"><span className="ln-num">1</span><span className="ln-content"><span className="t-kw">const</span> gaskit = <span className="t-kw">new</span> <span className="t-fn">SorobanGasKit</span>{"({"} ...config {"});"}</span></div>
             <div className="ln"><span className="ln-num">2</span><span className="ln-content" /></div>
             <div className="ln"><span className="ln-num">3</span><span className="ln-content"><span className="t-kw">await</span> gaskit.<span className="t-fn">execute</span>{"({"}</span></div>
             <div className="ln"><span className="ln-num">4</span><span className="ln-content">{"  "}user, targetContract, functionName,</span></div>
             <div className="ln"><span className="ln-num">5</span><span className="ln-content">{"  "}args, signer</span></div>
-            <div className="ln"><span className="ln-num">6</span><span className="ln-content">{"});"} <span className="t-cmt">{"// that's it — zero XLM needed"}</span></span></div>
+            <div className="ln"><span className="ln-num">6</span><span className="ln-content">{"});"} <span className="t-cmt">{"// that's it — zero XLM needed"}</span></span>            </div>
           </div>
         </div>
       </section>
@@ -645,6 +670,16 @@ function App() {
                 ))
               )}
             </div>
+            {lastTxHash && (
+              <a
+                href={`https://stellar.expert/explorer/testnet/tx/${lastTxHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="explorer-link"
+              >
+                View on Stellar Expert ↗
+              </a>
+            )}
           </div>
         </div>
       </section>

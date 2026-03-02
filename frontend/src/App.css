@@ -252,6 +252,10 @@
   border: 1px solid var(--border);
 }
 
+.showcase-desc strong {
+  color: var(--text-0);
+}
+
 /* ── Problem / Solution Cards ── */
 .ps-grid {
   display: grid;

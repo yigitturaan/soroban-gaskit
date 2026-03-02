@@ -566,7 +566,7 @@ await gaskit.execute({
         <div className="section-tag">Playground</div>
         <h2 className="section-title">Interactive SDK Showcase</h2>
         <p className="section-desc showcase-desc">
-          This interface is a live demonstration built using the <code>soroban-gaskit</code> SDK. While we use a USDC transfer for this example, the SDK is action-agnostic and can wrap any Soroban smart contract call into a gasless experience with just 3 lines of code.
+          A live demonstration of the <code>soroban-gaskit</code> SDK. Watch how just <strong>3 lines of code</strong> can wrap any standard contract call into a completely gasless experience.
         </p>
 
         <div className="panel-grid">

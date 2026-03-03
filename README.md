@@ -59,7 +59,7 @@ This kills conversion for consumer dApps, wallets, and payment flows.
 
 **MVP Status & Integration:** For this hackathon MVP, the SDK is provided as a highly portable, zero-dependency (aside from `stellar-sdk`) ES module (`SorobanGasKit.js`). You can drop it directly into your frontend (`App.jsx` or similar) in any React/Vite/Node project. Publishing to the npm registry (`npm install soroban-gaskit`) with full TypeScript (`.d.ts`) support is our immediate priority for V2.
 
-**Bring Your Own Token (BYOT) **
+**Bring Your Own Token (BYOT)**
 
 While this demo showcase uses a specific Testnet USDC, **Soroban GasKit is completely token-agnostic.** Developers are not locked into our token. To use this in your own dApp, simply replace the `feeToken` ID with your own custom Soroban token or stablecoin.
 

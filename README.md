@@ -57,26 +57,31 @@ This kills conversion for consumer dApps, wallets, and payment flows.
 
 ## Developer Experience
 
-> **MVP Status & Integration:** For this hackathon MVP, the SDK is provided as a highly portable, zero-dependency (aside from `stellar-sdk`) ES module (`SorobanGasKit.js`). You can drop it directly into any React/Vite/Node project. Publishing to the `npm` registry (`npm install soroban-gaskit`) with full TypeScript (`.d.ts`) support is our immediate priority for V2.
+**MVP Status & Integration:** For this hackathon MVP, the SDK is provided as a highly portable, zero-dependency (aside from `stellar-sdk`) ES module (`SorobanGasKit.js`). You can drop it directly into your frontend (`App.jsx` or similar) in any React/Vite/Node project. Publishing to the npm registry (`npm install soroban-gaskit`) with full TypeScript (`.d.ts`) support is our immediate priority for V2.
 
-```js
-import { SorobanGasKit } from "soroban-gaskit";
+**Bring Your Own Token (BYOT) 🚀**
 
+While this demo showcase uses a specific Testnet USDC, **Soroban GasKit is completely token-agnostic.** Developers are not locked into our token. To use this in your own dApp, simply replace the `feeToken` ID with your own custom Soroban token or stablecoin.
+
+```javascript
+import { SorobanGasKit } from "./SorobanGasKit"; // Drop the module into your project
+
+// 1. Initialize the kit with your custom parameters
 const gaskit = new SorobanGasKit({
   rpcUrl:           "https://soroban-testnet.stellar.org",
   networkPassphrase: "Test SDF Network ; September 2015",
-  contractId:       "CAPDJ4F...UZGSNCY",   // FeeForwarder contract
-  feeToken:         "CA63EPM...LTVNR4",    // USDC on Testnet
+  contractId:       "CAPDJ4F...UZGSNCY",   // The deployed FeeForwarder contract
+  feeToken:         "CA63EPM...LTVNR4",    // 👉 REPLACE THIS with your own Token ID!
   relayerUrl:       "https://stellar-gas-station-api.onrender.com/relay",
   relayerPublicKey: "GCF57AY...SHTT5KW",
-  feeAmount:        50_000n,                // 0.005 USDC (7-decimal)
+  feeAmount:        50_000n,                // 0.005 tokens (assuming 7-decimals)
 });
 
-// Gasless USDC transfer — that's it.
+// 2. Wrap any contract call into a gasless transaction
 await gaskit.execute({
   user:           publicKey,
-  targetContract: "CUSDC...",
-  functionName:   "transfer",
+  targetContract: "CUSDC...", // Can be a token, NFT, or governance contract
+  functionName:   "transfer",  // Any valid function on the target contract
   args:           [from, to, amount],
   signer:         freighterSigner,
 });

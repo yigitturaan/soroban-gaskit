@@ -1,6 +1,6 @@
 # Soroban GasKit
 
-> The action-agnostic **Gas Abstraction** SDK for Soroban.
+> The action-agnostic **Gas Abstraction** Infrastructure & SDK for Soroban.
 > Users pay fees in USDC — zero XLM needed for gas. Any contract call. Three lines to integrate.
 
 **[Try the Live Demo](https://soroban-gaskit.vercel.app/)** | **[Watch the Architecture & Demo Video](#)**

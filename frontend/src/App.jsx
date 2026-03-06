@@ -658,7 +658,7 @@ await gaskit.execute({
         <div className="section-tag">Playground</div>
         <h2 className="section-title">Interactive SDK Showcase</h2>
         <p className="section-desc showcase-desc">
-          A live demonstration of the Soroban GasKit infrastructure. Watch how just 3 lines of frontend code can wrap any standard contract call into a completely gasless experience, powered by our custom smart contracts and relayer network.
+          A live demonstration of the Soroban GasKit infrastructure. 💡 Note: This UI is simply a showcase window. Our core product is the underlying Smart Contracts, Relayer Network, and the plug-and-play SDK. Watch how just 3 lines of frontend code can wrap any standard contract call into a completely gasless experience.
         </p>
 
         <div className="testing-disclaimer">

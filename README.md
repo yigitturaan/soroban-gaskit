@@ -3,7 +3,7 @@
 > The action-agnostic **Gas Abstraction** Infrastructure & SDK for Soroban.
 > Users pay fees in USDC — zero XLM needed for gas. Any contract call. Three lines to integrate.
 
-**[Try the Live Demo](https://soroban-gaskit.vercel.app/)** | **[Watch the Architecture & Demo Video](#)**
+**[Explore the Infrastructure & Try the Live Interactive Demo](https://soroban-gaskit.vercel.app/)**
 
 [![Soroban](https://img.shields.io/badge/Soroban-Powered-blue?logo=stellar)](https://soroban.stellar.org)
 [![Stellar Network](https://img.shields.io/badge/Stellar-Testnet-green?logo=stellar)](https://soroban-testnet.stellar.org)

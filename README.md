@@ -172,6 +172,35 @@ stellar contract deploy --wasm target/wasm32-unknown-unknown/release/hello_world
 
 ---
 
+## The Developer Experience Benchmark
+
+**Without GasKit (Native Fee-Bump)**
+Developers must build and maintain their own backend infrastructure to handle XDR assembly, sequence number management, and private key security.
+1. Frontend requests transaction build from Backend.
+2. Backend queries Soroban RPC for sequence numbers.
+3. Backend builds FeeBumpTransaction XDR.
+4. Backend signs with the Relayer's Private Key (Security Risk).
+5. Backend sends XDR back to Frontend.
+6. Frontend asks User to sign the inner transaction.
+7. Frontend submits to RPC and handles polling.
+*(Estimated: 200+ lines of backend/frontend code + server maintenance)*
+
+**With Soroban GasKit**
+Zero backend required. The entire flow is handled client-side in just 3 lines of code.
+
+```javascript
+// Drop this directly into your React/Vite frontend. No backend needed.
+await gaskit.execute({
+  user:           publicKey,
+  targetContract: "CUSDC...",
+  functionName:   "transfer",
+  args:           [from, to, amount],
+  signer:         freighterSigner,
+});
+```
+
+---
+
 ## Security & Known Limitations (Hackathon MVP)
 
 As a V1 MVP built for this hackathon, we prioritized architectural proof-of-concept over production-grade security. A lead developer evaluating this repository should note the following planned improvements for V2:

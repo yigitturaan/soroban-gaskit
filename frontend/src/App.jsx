@@ -244,7 +244,7 @@ function App() {
 await gaskit.execute({
   user, targetContract, functionName,
   args, signer
-}); // that's it — zero XLM needed`;
+}); // that's it — Zero XLM for gas`;
 
   const log = useCallback((tag, msg) => {
     setLogs((prev) => [...prev, { ts: ts(), tag, msg }]);
@@ -392,7 +392,7 @@ await gaskit.execute({
         </h1>
         <p className="hero-sub">
           The action-agnostic gas abstraction layer for Soroban.<br />
-          Users pay in USDC. Zero XLM. Three lines to integrate.
+          Users pay in USDC. Zero XLM for gas. Three lines to integrate.
         </p>
         <div className="hero-actions">
           <a href="#demo" className="btn btn-primary">
@@ -528,7 +528,7 @@ await gaskit.execute({
             <div className="ln"><span className="ln-num">3</span><span className="ln-content"><span className="t-kw">await</span> gaskit.<span className="t-fn">execute</span>{"({"}</span></div>
             <div className="ln"><span className="ln-num">4</span><span className="ln-content">{"  "}user, targetContract, functionName,</span></div>
             <div className="ln"><span className="ln-num">5</span><span className="ln-content">{"  "}args, signer</span></div>
-            <div className="ln"><span className="ln-num">6</span><span className="ln-content">{"});"} <span className="t-cmt">{"// that's it — zero XLM needed"}</span></span>            </div>
+            <div className="ln"><span className="ln-num">6</span><span className="ln-content">{"});"} <span className="t-cmt">{"// that's it — Zero XLM for gas"}</span></span>            </div>
           </div>
         </div>
       </section>
@@ -615,7 +615,7 @@ await gaskit.execute({
               <div className="step-content">
                 <div className="step-name">Execute Transfer</div>
                 <div className="step-detail">
-                  Send 10 USDC. Fee: 0.0009 USDC. XLM cost: 0.
+                  Send 10 USDC. Fee: 0.0009 USDC. Zero XLM for gas.
                 </div>
                 <div className="form-group">
                   <label className="form-label" htmlFor="recipient">
@@ -678,7 +678,7 @@ await gaskit.execute({
                 <div className="receipt-header">Transaction Successful</div>
                 <div className="receipt-row">
                   <span className="receipt-label">Network Gas</span>
-                  <span className="receipt-value">0 XLM</span>
+                  <span className="receipt-value">Zero XLM for gas</span>
                   <span className="receipt-pill">Sponsored by Relayer</span>
                 </div>
                 <div className="receipt-row">

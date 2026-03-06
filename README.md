@@ -1,7 +1,7 @@
 # Soroban GasKit
 
 > The action-agnostic **Gas Abstraction** SDK for Soroban.
-> Users pay fees in USDC — zero XLM required. Any contract call. Three lines to integrate.
+> Users pay fees in USDC — zero XLM needed for gas. Any contract call. Three lines to integrate.
 
 **[Try the Live Demo](https://soroban-gaskit.vercel.app/)** | **[Watch the Architecture & Demo Video](#)**
 
@@ -22,6 +22,10 @@ Every Soroban transaction requires XLM for gas. Users who hold stablecoins face 
 4. Heavy infrastructure: existing paymaster solutions require developers to manage complex relayer backends, API keys, and CORS configurations.
 
 This kills conversion for consumer dApps, wallets, and payment flows.
+
+## GasKit vs. Native Fee-Bump
+
+Stellar natively supports Fee-Bump transactions. However, implementing them requires developers to build, host, and secure their own relayer backends to manage private keys and XDR assembly. **Soroban GasKit abstracts this entirely.** We provide a zero-configuration, frontend-only SDK. Developers get the power of Fee-Bump without writing a single line of backend code.
 
 ## The Solution
 
@@ -165,6 +169,17 @@ stellar contract build
 stellar contract deploy --wasm target/wasm32-unknown-unknown/release/hello_world.wasm \
   --source <DEPLOYER> --network testnet
 ```
+
+---
+
+## Security & Known Limitations (Hackathon MVP)
+
+As a V1 MVP built for this hackathon, we prioritized architectural proof-of-concept over production-grade security. A lead developer evaluating this repository should note the following planned improvements for V2:
+
+- **Trustline Base Reserves:** While gas is abstracted, Stellar still natively requires a 0.5 XLM base reserve to establish the initial USDC trustline.
+- **Relayer Centralization (SPOF):** The current relayer is a single Express.js instance. Production deployment will require a decentralized relayer network with failover mechanisms.
+- **Rate Limiting & Anti-Spam:** The relayer currently lacks IP-based rate limiting or a dynamic fee oracle.
+- **Package Management:** The SDK is currently a portable `.js` module. Publishing to npm with full TypeScript support is on the immediate roadmap.
 
 ---
 

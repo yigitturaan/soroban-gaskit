@@ -396,7 +396,7 @@ await gaskit.execute({
       const msgLower = String(err.message ?? "").toLowerCase();
       const isNotFound = status === 404 || msgLower.includes("not found") || msgLower.includes("404");
       if (isNotFound) {
-        log("err", "Trustline error: Account not active. Please open your Freighter extension and click 'Fund with Friendbot' to initialize your wallet with testnet XLM first.");
+        log("err", "Trustline error: Account not active.");
       } else {
         const msg = err.response?.data?.extras?.result_codes?.transaction ?? err.message ?? "Unknown error";
         log("err", `Trustline error: ${msg}`);

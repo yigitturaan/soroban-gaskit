@@ -179,7 +179,7 @@ soroban-gaskit/
 ```bash
 # Relayer Bot
 cd relayer-bot
-cp .env.example .env        # Add your relayer secret key
+cp .env.example .env        # Add your relayer and faucet secret keys
 npm install
 node index.js               # Starts on :3001
 

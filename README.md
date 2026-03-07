@@ -12,6 +12,10 @@
 
 ---
 
+## Vision
+
+The vision behind Soroban GasKit is simple: Web3 should be as easy to use as Web2. Users shouldn't need to figure out how to buy network tokens just to make a simple stablecoin transfer. I built this project to help remove that "gas barrier" so everyday users can interact with Stellar dApps without the friction.
+
 ## The Problem
 
 Every Soroban transaction requires XLM for gas. Users who hold stablecoins face an onboarding wall:
@@ -263,7 +267,9 @@ Contributions are welcome! Feel free to [open issues](https://github.com/yigittu
 
 ---
 
-## Team
+## About Me
 
-Built for the Stellar & Soroban ecosystem.
+**Yiğit Turan**
+I am a Statistics student at Middle East Technical University (METU) and a member of the METU Blockchain community. Honestly, this is my first-ever Web3 project! While exploring the Stellar and Soroban ecosystem, I noticed how gas fees block new users from easily onboarding. So, I decided to try building a practical solution for it. I'm excited to keep learning and building in this space.
+
 - **GitHub:** [@yigitturaan](https://github.com/yigitturaan)
